@@ -22,8 +22,6 @@ spec:
   replicas: 3
   template:
     metadata:
-      annotations:
-        container.seccomp.security.alpha.kubernetes.io/manager: runtime/default
       labels:
         control-plane: controller-manager
         gatekeeper.sh/operation: webhook
@@ -31,15 +29,15 @@ spec:
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                - key: gatekeeper.sh/operation
-                  operator: In
-                  values:
-                  - webhook
-              topologyKey: kubernetes.io/hostname
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: gatekeeper.sh/operation
+                      operator: In
+                      values:
+                        - webhook
+                topologyKey: kubernetes.io/hostname
       serviceAccountName: admin
       containers:
         - command:
@@ -84,14 +82,6 @@ spec:
             httpGet:
               path: /readyz
               port: 9090
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: 999
-            runAsNonRoot: true
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - all
       terminationGracePeriodSeconds: 60
       nodeSelector:
         kubernetes.io/os: linux
@@ -115,8 +105,6 @@ spec:
       labels:
         control-plane: audit-controller
         gatekeeper.sh/operation: audit
-      annotations:
-        container.seccomp.security.alpha.kubernetes.io/manager: runtime/default
     spec:
       containers:
         - args:
@@ -160,14 +148,6 @@ spec:
             requests:
               cpu: 100m
               memory: 256Mi
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - all
-            runAsGroup: 999
-            runAsNonRoot: true
-            runAsUser: 1000
       serviceAccountName: gatekeeper-admin
       terminationGracePeriodSeconds: 60
       nodeSelector:

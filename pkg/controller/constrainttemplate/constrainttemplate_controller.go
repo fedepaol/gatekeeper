@@ -21,6 +21,7 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/open-policy-agent/frameworks/constraint/pkg/apis/templates/v1beta1"
 	opa "github.com/open-policy-agent/frameworks/constraint/pkg/client"
 	"github.com/open-policy-agent/frameworks/constraint/pkg/core/templates"
@@ -447,7 +448,8 @@ func (r *ReconcileConstraintTemplate) handleUpdate(
 			return reconcile.Result{}, err
 		}
 	} else if !reflect.DeepEqual(newCRD, currentCRD) {
-		log.Info("updating crd")
+		log.Info("updating crd", cmp.Diff(newCRD, currentCRD))
+
 		if err := r.Update(context.Background(), newCRD); err != nil {
 			err := r.reportErrorOnCTStatus("update_error", "Could not update CRD", status, err)
 			return reconcile.Result{}, err

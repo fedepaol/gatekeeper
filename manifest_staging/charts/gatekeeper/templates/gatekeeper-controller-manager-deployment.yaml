@@ -90,14 +90,6 @@ spec:
             port: 9090
         resources: 
 {{ toYaml .Values.resources | indent 10 }}
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-            - all
-          runAsGroup: 999
-          runAsNonRoot: true
-          runAsUser: 1000
         volumeMounts:
         - mountPath: /certs
           name: cert
